@@ -62,9 +62,11 @@ func (d *Default) Run() (err error) {
 
 	// - repository: products
 	rp := repository.NewProductsMySQL(db)
+	rw := repository.NewWarehouseMySQL(db)
 
 	// - handler: products
 	hp := handler.NewProductsDefault(rp)
+	hw := handler.NewWarehouseDefault(rw)
 
 	// - router: chi
 	rt := chi.NewRouter()
@@ -74,13 +76,21 @@ func (d *Default) Run() (err error) {
 	// - router: routes
 	rt.Route("/products", func(r chi.Router) {
 		// - GET /products
-		r.Get("/", hp.GetOne())
+		r.Get("/{id}", hp.GetOne())
+		r.Get("/", hp.GetAll())
 		// - POST /products
 		r.Post("/", hp.Create())
 		// - PUT /products/{id}
 		r.Patch("/{id}", hp.Update())
 		// - DELETE /products/{id}
 		r.Delete("/{id}", hp.Delete())
+	})
+
+	rt.Route("/warehouses", func(r chi.Router) {
+		r.Get("/{id}", hw.GetByID())
+		r.Get("/", hw.GetAll())
+		r.Post("/", hw.Create())
+		r.Get("/{id}/productReport", hw.GetProductReport())
 	})
 
 	// run

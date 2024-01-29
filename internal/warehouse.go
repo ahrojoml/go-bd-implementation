@@ -13,6 +13,7 @@ type Warehouse struct {
 type RepositoryWarehouse interface {
 	GetByID(id int) (w Warehouse, err error)
 	GetAll() (w []Warehouse, err error)
+	GetProductCount(id int) (int, error)
 	Create(w *Warehouse) (err error)
 }
 

@@ -69,7 +69,7 @@ func (h *WarehouseDefault) GetAll() http.HandlerFunc {
 			return
 		}
 
-		data := make([]WarehouseJSON, len(warehouses))
+		data := make([]WarehouseJSON, 0, len(warehouses))
 		for _, warehouse := range warehouses {
 			data = append(data, WarehouseJSON{
 				ID:        warehouse.ID,
@@ -126,8 +126,36 @@ func (h *WarehouseDefault) Create() http.HandlerFunc {
 }
 
 // Im lazy and dont want to define my service layer right now
-func (h *WarehouseDefault) ProductReport() http.HandlerFunc {
+func (h *WarehouseDefault) GetProductReport() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			response.Error(w, http.StatusBadRequest, "invalid id")
+			return
+		}
 
+		warehouse, err := h.rw.GetByID(id)
+		if err != nil {
+			switch {
+			case errors.Is(err, internal.ErrWarehouseNotFound):
+				response.Error(w, http.StatusNotFound, "warehouse not found")
+			default:
+				response.Error(w, http.StatusInternalServerError, "internal server error")
+			}
+			return
+		}
+
+		count, err := h.rw.GetProductCount(id)
+		if err != nil {
+			response.Error(w, http.StatusInternalServerError, "internal server error")
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"data": map[string]any{
+				"name":          warehouse.Name,
+				"product_count": count,
+			},
+		})
 	}
 }

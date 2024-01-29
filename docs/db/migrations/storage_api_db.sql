@@ -10,14 +10,14 @@ DROP TABLE IF EXISTS `warehouses`;
 CREATE TABLE `warehouses` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `adress` varchar(150) NOT NULL,
+  `address` varchar(150) NOT NULL,
   `telephone` varchar(150) NOT NULL,
   `capacity` int NOT NULL,
   PRIMARY KEY (`id`)
 );
 
 -- Volcado de datos para la tabla `warehouses`
-INSERT INTO `warehouses` (`name`, `adress`, `telephone`, `capacity`) VALUES
+INSERT INTO `warehouses` (`name`, `address`, `telephone`, `capacity`) VALUES
 ('Main Warehouse', '221 Baker Street', "4555666", 100);
 
 DROP TABLE IF EXISTS `products`;
